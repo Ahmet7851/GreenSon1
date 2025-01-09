@@ -1,0 +1,658 @@
+.post-detail-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.post-content {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Başlık ve Meta Bilgileri */
+.post-header {
+    margin-bottom: 2rem;
+}
+
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.post-title {
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.author-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    color: var(--primary-color);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.post-date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.post-stats {
+    display: flex;
+    gap: 1rem;
+    color: var(--text-secondary);
+}
+
+.post-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Gönderi İçeriği */
+.post-body {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin: 2rem 0;
+}
+
+/* Görseller */
+.post-images {
+    margin: 2rem 0;
+}
+
+.post-images h3 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.image-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.image-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Dosyalar */
+.post-files {
+    margin: 2rem 0;
+}
+
+.post-files h3 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.file-item:hover {
+    background: #f0f0f0;
+    transform: translateX(5px);
+}
+
+.file-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.file-size {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Yorumlar Bölümü */
+.comments-section {
+    margin-top: 3rem;
+}
+
+.comments-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.comment-form {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.comment-form textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    resize: vertical;
+    margin-bottom: 1rem;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.comment {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.comment-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.default-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.author-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.author-name {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.comment-date {
+    font-size: 0.875rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Yorum Butonları */
+.comment .comment-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.comment .comment-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #f3f4f6;
+}
+
+.comment .comment-btn.edit-btn {
+    color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.comment .comment-btn.delete-btn {
+    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.comment .comment-btn i {
+    font-size: 0.875rem;
+}
+
+.comment .comment-btn span {
+    display: inline-block;
+    margin-left: 0.25rem;
+}
+
+/* Düzenle butonu */
+.edit-btn {
+    color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.edit-btn:hover {
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Sil butonu */
+.delete-btn {
+    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.delete-btn:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Kaydet butonu */
+.save-btn {
+    color: #10b981;
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.save-btn:hover {
+    background-color: rgba(16, 185, 129, 0.2);
+}
+
+/* İptal butonu */
+.cancel-btn {
+    color: #6b7280;
+    background-color: rgba(107, 114, 128, 0.1);
+}
+
+.cancel-btn:hover {
+    background-color: rgba(107, 114, 128, 0.2);
+}
+
+/* Yorum İçeriği */
+.comment-content {
+    color: #4a5568;
+    line-height: 1.5;
+    margin-top: 0.5rem;
+}
+
+/* Düzenleme Formu */
+.comment-edit-form {
+    margin-top: 1rem;
+}
+
+.edit-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.edit-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Silme Modalı */
+.delete-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-dialog {
+    position: relative;
+    width: 95%;
+    max-width: 400px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+    pointer-events: auto;
+}
+
+.modal-content {
+    position: relative;
+    z-index: 1;
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 1.125rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-header h3 i {
+    color: #ef4444;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    color: #4b5563;
+    font-size: 0.975rem;
+    line-height: 1.5;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.modal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-btn.cancel-btn {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.modal-btn.cancel-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.modal-btn.confirm-btn {
+    background-color: #ef4444;
+    color: white;
+}
+
+.modal-btn.confirm-btn:hover {
+    background-color: #dc2626;
+}
+
+/* Modal Gösterim Animasyonu */
+.delete-modal[style*="block"] .modal-dialog {
+    transform: scale(1);
+}
+
+/* Görsel Görüntüleyici */
+.image-viewer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-viewer.active {
+    display: flex;
+}
+
+.image-viewer img {
+    max-width: 90%;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+.close-viewer {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .comment-btn {
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .comment-btn i {
+        font-size: 0.75rem;
+    }
+    
+    .comment-btn span {
+        font-size: 0.75rem;
+    }
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    .post-detail-container {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    .post-meta {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+/* Yorum Butonları için özel stiller */
+.comment-actions .comment-btn,
+.comment-edit-form .comment-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 1rem !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Düzenle butonu */
+.comment-actions .edit-btn {
+    color: #3b82f6 !important;
+    background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+.comment-actions .edit-btn:hover {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Sil butonu */
+.comment-actions .delete-btn {
+    color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.comment-actions .delete-btn:hover {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Modal Butonları için ayrı stiller */
+.modal-footer .modal-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.625rem 1.25rem !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.modal-footer .cancel-btn {
+    color: #6b7280 !important;
+    background-color: #f3f4f6 !important;
+}
+
+.modal-footer .cancel-btn:hover {
+    background-color: #e5e7eb !important;
+}
+
+.modal-footer .confirm-btn {
+    color: #ffffff !important;
+    background-color: #ef4444 !important;
+}
+
+.modal-footer .confirm-btn:hover {
+    background-color: #dc2626 !important;
+}
+
+/* İkon stilleri */
+.comment-btn i,
+.modal-btn i {
+    font-size: 0.875rem !important;
+}
+
+/* Metin stilleri */
+.comment-btn span,
+.modal-btn span {
+    display: inline-block !important;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+    .comment-btn,
+    .modal-btn {
+        padding: 0.375rem 0.75rem !important;
+    }
+    
+    .comment-btn i,
+    .modal-btn i {
+        font-size: 0.75rem !important;
+    }
+    
+    .comment-btn span,
+    .modal-btn span {
+        font-size: 0.75rem !important;
+    }
+} 

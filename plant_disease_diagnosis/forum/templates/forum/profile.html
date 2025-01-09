@@ -1,0 +1,560 @@
+{% extends 'forum/base.html' %}
+{% load static %}
+
+{% block title %}{{ profile.user.username }} - GreenAI Forum{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Profil Başlığı -->
+    <div class="profile-header">
+        <div class="profile-header-content">
+            <div class="profile-avatar">
+                <img src="{{ profile.avatar.url|default:'/static/forum/images/default-avatar.png' }}" alt="{{ profile.user.username }}">
+                {% if request.user == profile.user %}
+                <label class="upload-btn">
+                    <i class="fas fa-camera"></i>
+                    <input type="file" name="avatar" id="avatarInput">
+                </label>
+                {% endif %}
+            </div>
+            <div class="profile-info">
+                <div class="profile-title">
+                    <h1>{{ profile.user.username }}</h1>
+                    {% if request.user.is_authenticated and request.user == profile.user %}
+                    <button class="edit-profile-btn" id="editProfileBtn">
+                        <i class="fas fa-edit"></i>
+                        Profili Düzenle
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="profile-meta">
+                    <span>
+                        <i class="fas fa-calendar-alt"></i>
+                        Katılım: {{ profile.user.date_joined|date:"F Y" }}
+                    </span>
+                    <span>
+                        <i class="fas fa-user-tag"></i>
+                        {{ profile.user.get_role_display|default:"Editör" }}
+                    </span>
+                </div>
+                {% if profile.bio %}
+                <p class="profile-bio">{{ profile.bio }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Profil İstatistikleri -->
+    <div class="profile-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ profile.user.post_set.count }}</span>
+                <span class="stat-label">GÖNDERİ</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ profile.user.comment_set.count }}</span>
+                <span class="stat-label">YORUM</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ total_views|default:"0" }}</span>
+                <span class="stat-label">GÖRÜNTÜLENME</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profil İçeriği -->
+    <div class="profile-content">
+        <div class="profile-tabs">
+            <button class="tab-btn active" data-tab="posts">
+                <i class="fas fa-file-alt"></i>
+                Gönderiler
+            </button>
+            <button class="tab-btn" data-tab="comments">
+                <i class="fas fa-comments"></i>
+                Yorumlar
+            </button>
+            {% if request.user == profile.user %}
+            <button class="tab-btn" data-tab="settings">
+                <i class="fas fa-cog"></i>
+                Ayarlar
+            </button>
+            {% endif %}
+        </div>
+
+        <!-- Gönderiler Tab -->
+        <div class="tab-content active" id="posts">
+            <style>
+                .posts-list {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                    gap: 1.5rem;
+                    padding: 1rem;
+                }
+
+                .post-item {
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+                    transition: all 0.3s ease;
+                    overflow: hidden;
+                }
+
+                .post-item:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                }
+
+                .post-header {
+                    padding: 1rem;
+                    border-bottom: 1px solid #f0f0f0;
+                    background: #f8f9fa;
+                }
+
+                .post-category {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.4rem 0.8rem;
+                    background: rgba(46, 204, 113, 0.1);
+                    color: #2ecc71;
+                    border-radius: 20px;
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                }
+
+                .post-content {
+                    padding: 1rem;
+                }
+
+                .post-title {
+                    color: #2d3436;
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    margin-bottom: 0.8rem;
+                    text-decoration: none;
+                    display: block;
+                }
+
+                .post-title:hover {
+                    color: #2ecc71;
+                }
+
+                .post-meta {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    color: #636e72;
+                    font-size: 0.9rem;
+                }
+
+                .post-meta span {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                }
+
+                .post-meta i {
+                    color: #2ecc71;
+                }
+
+                .post-date {
+                    margin-top: 1rem;
+                    padding-top: 1rem;
+                    border-top: 1px solid #f0f0f0;
+                    color: #636e72;
+                    font-size: 0.9rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .empty-state {
+                    text-align: center;
+                    padding: 3rem;
+                    color: #636e72;
+                }
+
+                .empty-state i {
+                    font-size: 3rem;
+                    color: #2ecc71;
+                    opacity: 0.5;
+                    margin-bottom: 1rem;
+                }
+            </style>
+
+            {% if posts %}
+            <div class="posts-list">
+                {% for post in posts %}
+                <div class="post-item">
+                    <div class="post-header">
+                        <div class="post-category">
+                            <i class="fas fa-folder"></i>
+                            {{ post.category.name }}
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <a href="{% url 'forum:post_detail' post.id %}" class="post-title">
+                            {{ post.title }}
+                        </a>
+                        <div class="post-meta">
+                            <span>
+                                <i class="fas fa-eye"></i>
+                                {{ post.views }}
+                            </span>
+                            <span>
+                                <i class="fas fa-comments"></i>
+                                {{ post.comments.count }}
+                            </span>
+                        </div>
+                        <div class="post-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ post.created_at|date:"d M Y" }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-file-alt"></i>
+                <p>Henüz gönderi yok</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Yorumlar Tab -->
+        <div class="tab-content" id="comments">
+            <style>
+                .comments-list {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                    gap: 1.5rem;
+                    padding: 1rem;
+                }
+
+                .comment-card {
+                    background: white;
+                    border-radius: 15px;
+                    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+                    transition: all 0.3s ease;
+                    overflow: hidden;
+                }
+
+                .comment-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                }
+
+                .comment-header {
+                    padding: 1rem;
+                    background: #f8f9fa;
+                    border-bottom: 1px solid #f0f0f0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                .post-link {
+                    color: #2d3436;
+                    font-weight: 600;
+                    text-decoration: none;
+                    font-size: 1.1rem;
+                    transition: color 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .post-link i {
+                    color: #2ecc71;
+                    font-size: 1rem;
+                }
+
+                .post-link:hover {
+                    color: #2ecc71;
+                }
+
+                .comment-date {
+                    font-size: 0.9rem;
+                    color: #636e72;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .comment-date i {
+                    color: #2ecc71;
+                }
+
+                .comment-content {
+                    padding: 1rem;
+                    color: #2d3436;
+                    line-height: 1.6;
+                    font-size: 1rem;
+                }
+
+                .empty-state {
+                    text-align: center;
+                    padding: 3rem;
+                    color: #636e72;
+                    grid-column: 1 / -1;
+                }
+
+                .empty-state i {
+                    font-size: 3rem;
+                    color: #2ecc71;
+                    opacity: 0.5;
+                    margin-bottom: 1rem;
+                }
+            </style>
+
+            {% if comments %}
+            <div class="comments-list">
+                {% for comment in comments %}
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <a href="{% url 'forum:post_detail' comment.post.id %}" class="post-link">
+                            <i class="fas fa-file-alt"></i>
+                            {{ comment.post.title|truncatechars:40 }}
+                        </a>
+                        <span class="comment-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ comment.created_at|date:"d M Y" }}
+                        </span>
+                    </div>
+                    <div class="comment-content">
+                        {{ comment.content|linebreaks|truncatewords:50 }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-comments"></i>
+                <p>Henüz yorum yok</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Ayarlar Tab -->
+        {% if request.user == profile.user %}
+        <div class="tab-content" id="settings">
+            <form class="settings-form" method="post" action="{% url 'forum:update_profile' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="bio">Hakkımda</label>
+                    <textarea name="bio" id="bio" rows="4">{{ profile.bio }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-posta</label>
+                    <input type="email" name="email" id="email" value="{{ profile.user.email }}">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Değişiklikleri Kaydet
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Profil Düzenleme Modal -->
+{% if request.user == profile.user %}
+<div id="editProfileModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Profili Düzenle</h3>
+            <button class="close-modal">&times;</button>
+        </div>
+        <form method="POST" action="{% url 'forum:update_profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Profil Fotoğrafı</label>
+                <div class="avatar-upload-preview">
+                    <img id="avatarPreview" src="{{ profile.avatar.url|default:'/static/forum/images/default-avatar.png' }}" alt="Avatar">
+                    <label class="avatar-upload">
+                        <i class="fas fa-camera"></i>
+                        <input type="file" name="avatar" accept="image/*">
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="username">Kullanıcı Adı</label>
+                <input type="text" id="username" name="username" class="form-input" value="{{ profile.user.username }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="email">E-posta</label>
+                <input type="email" id="email" name="email" class="form-input" value="{{ profile.user.email }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="bio">Hakkımda</label>
+                <textarea id="bio" name="bio" class="form-input form-textarea">{{ profile.bio }}</textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn cancel-btn close-modal">İptal</button>
+                <button type="submit" class="modal-btn save-btn">Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'forum/js/profile.js' %}"></script>
+{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'forum/css/profile.css' %}" rel="stylesheet">
+<style>
+    /* Navbar stilleri */
+    .navbar {
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 0.5rem 2rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+    }
+
+    .nav-content {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-auth {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-left: auto;
+    }
+
+    .user-menu {
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .user-menu .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        transition: transform 0.3s ease;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 4px;
+        min-width: 200px;
+        padding: 8px 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        margin-top: 5px;
+    }
+
+    /* Boşluk ekleyerek menüye ulaşmayı kolaylaştırma */
+    .dropdown-menu::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: transparent;
+    }
+
+    .user-menu:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        display: block;
+    }
+
+    /* Menü görünür olduğunda da hover efektini koru */
+    .dropdown-menu:hover {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        display: block;
+    }
+
+    .dropdown-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        color: #333;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+        background: rgba(46, 204, 113, 0.1);
+        color: #2ecc71;
+    }
+
+    .dropdown-menu i {
+        width: 20px;
+        color: #666;
+    }
+
+    .dropdown-menu a:hover i {
+        color: #2ecc71;
+    }
+
+    /* Yeni Gönderi Butonu Stilleri */
+    .new-topic-btn {
+        background: #2ecc71;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .new-topic-btn:hover {
+        background: #27ae60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+    }
+
+    .new-topic-btn i {
+        font-size: 0.9em;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,80 @@
+{% extends 'forum/base.html' %}
+{% load static %}
+
+{% block title %}Üyeler - GreenAI Forum{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'forum/css/users.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="users-page">
+    <!-- Başlık ve Arama -->
+    <div class="users-header">
+        <h1>Forum Üyeleri</h1>
+        <div class="search-box">
+            <input type="text" id="userSearch" placeholder="Üye ara...">
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+
+    <!-- Üyeler Listesi -->
+    <div class="users-container">
+        {% if users %}
+        <div class="users-grid" id="usersGrid">
+            {% for profile in users %}
+            <div class="user-card" data-username="{{ profile.user.username|lower }}">
+                <div class="user-avatar">
+                    {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="{{ profile.user.username }}">
+                    {% else %}
+                    <i class="fas fa-user-circle"></i>
+                    {% endif %}
+                </div>
+                
+                <div class="user-info">
+                    <h3 class="username">
+                        <a href="{% url 'forum:profile' profile.user.username %}">
+                            {{ profile.user.username }}
+                        </a>
+                    </h3>
+                    
+                    <div class="user-stats">
+                        <span class="join-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            Katılım: {{ profile.user.date_joined|date:"M Y" }}
+                        </span>
+                        <span class="posts-count">
+                            <i class="fas fa-file-alt"></i>
+                            {{ profile.user.post_set.count }} gönderi
+                        </span>
+                        <span class="comments-count">
+                            <i class="fas fa-comments"></i>
+                            {{ profile.user.comment_set.count }} yorum
+                        </span>
+                    </div>
+                    
+                    {% if profile.bio %}
+                    <p class="user-bio">{{ profile.bio|truncatewords:20 }}</p>
+                    {% endif %}
+                </div>
+                
+                <a href="{% url 'forum:profile' profile.user.username %}" class="user-link">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-users">
+            <i class="fas fa-users-slash"></i>
+            <p>Henüz üye yok</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'forum/js/users.js' %}"></script>
+{% endblock %} 

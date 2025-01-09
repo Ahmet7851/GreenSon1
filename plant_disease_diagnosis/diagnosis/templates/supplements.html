@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GreenAI - İlaçlar{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/supplements.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="supplements-container">
+    <!-- Filtre Bölümü -->
+    <aside class="filter-section">
+        <h2 class="filter-header">Filtreler</h2>
+        
+        <div class="filter-group">
+            <h3 class="filter-group-title">Kategori</h3>
+            <div class="filter-option" data-category="mantar">
+                <div class="custom-checkbox"></div>
+                <span>Mantar İlaçları</span>
+            </div>
+            <div class="filter-option" data-category="bakteri">
+                <div class="custom-checkbox"></div>
+                <span>Bakteri İlaçları</span>
+            </div>
+            <div class="filter-option" data-category="virus">
+                <div class="custom-checkbox"></div>
+                <span>Virüs İlaçları</span>
+            </div>
+            <div class="filter-option" data-category="hasere">
+                <div class="custom-checkbox"></div>
+                <span>Haşere İlaçları</span>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h3 class="filter-group-title">Fiyat Aralığı</h3>
+            <div class="filter-option" data-price="0-100">
+                <div class="custom-checkbox"></div>
+                <span>0-100 TL</span>
+            </div>
+            <div class="filter-option" data-price="100-200">
+                <div class="custom-checkbox"></div>
+                <span>100-200 TL</span>
+            </div>
+            <div class="filter-option" data-price="200-500">
+                <div class="custom-checkbox"></div>
+                <span>200-500 TL</span>
+            </div>
+            <div class="filter-option" data-price="500+">
+                <div class="custom-checkbox"></div>
+                <span>500+ TL</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Ürünler Bölümü -->
+    <main class="products-section">
+        <div class="products-header">
+            <div class="products-count">4 Ürün Bulundu</div>
+            <select class="sort-select">
+                <option value="popular">En Popüler</option>
+                <option value="price-low">Fiyat (Düşükten Yükseğe)</option>
+                <option value="price-high">Fiyat (Yüksekten Düşüğe)</option>
+                <option value="name">İsme Göre (A-Z)</option>
+            </select>
+        </div>
+
+        <div class="products-grid">
+            <!-- Mantar İlacı -->
+            <div class="product-card" data-category="mantar" data-price="199.99">
+                <div class="product-image">
+                    <img src="/media/assets/Mantarİlaci.png" alt="Prozol">
+                    <span class="product-badge">Yeni</span>
+                </div>
+                <div class="product-content">
+                    <div class="product-info">
+                        <h3 class="product-title">Mantar İlacı</h3>
+                        <p class="product-description">Adama markası güvencesiyle etkili mantar ilacı çözümü.</p>
+                    </div>
+                    <div class="product-actions">
+                        <div class="product-price">199.99 TL</div>
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            Sepete Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bakteri İlacı -->
+            <div class="product-card" data-category="bakteri" data-price="149.99">
+                <div class="product-image">
+                    <img src="/media/assets/Bakteriİlacı.jpg" alt="Barox">
+                    <span class="product-badge">Popüler</span>
+                </div>
+                <div class="product-content">
+                    <div class="product-info">
+                        <h3 class="product-title">Bakteri İlacı</h3>
+                        <p class="product-description">Barox ile bitkilerinizi bakterilerden koruyun.</p>
+                    </div>
+                    <div class="product-actions">
+                        <div class="product-price">149.99 TL</div>
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            Sepete Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Virüs İlacı -->
+            <div class="product-card" data-category="virus" data-price="299.99">
+                <div class="product-image">
+                    <img src="/media/assets/viron-600x600.jpg" alt="Viron">
+                    <span class="product-badge">İndirimli</span>
+                </div>
+                <div class="product-content">
+                    <div class="product-info">
+                        <h3 class="product-title">Virüs İlacı</h3>
+                        <p class="product-description">Viron ile bitki virüslerine karşı etkili koruma.</p>
+                    </div>
+                    <div class="product-actions">
+                        <div class="product-price">299.99 TL</div>
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            Sepete Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Haşere İlacı -->
+            <div class="product-card" data-category="hasere" data-price="179.99">
+                <div class="product-image">
+                    <img src="/media/assets/Hasereİlacı.jpg" alt="Pinos">
+                </div>
+                <div class="product-content">
+                    <div class="product-info">
+                        <h3 class="product-title">Haşere İlacı</h3>
+                        <p class="product-description">Pinos ile zararlı böceklere karşı güvenli çözüm.</p>
+                    </div>
+                    <div class="product-actions">
+                        <div class="product-price">179.99 TL</div>
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            Sepete Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/supplements.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends 'forum/base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} - GreenAI Forum{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'forum/css/category.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="category-container">
+    <!-- Kategori Başlığı -->
+    <div class="category-header">
+        <div class="category-info">
+            <div class="category-icon">
+                <i class="{{ category.icon }}"></i>
+            </div>
+            <div class="category-details">
+                <h1>{{ category.name }}</h1>
+                <p>{{ category.description }}</p>
+            </div>
+        </div>
+        <div class="category-stats">
+            <div class="stat-item">
+                <i class="fas fa-file-alt"></i>
+                <span>{{ posts.count }} Gönderi</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-comments"></i>
+                <span>{{ total_comments }} Yorum</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtreler ve Sıralama -->
+    <div class="filters-bar">
+        <div class="search-box">
+            <input type="text" id="postSearch" placeholder="Gönderilerde ara...">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="sort-options">
+            <select id="sortPosts">
+                <option value="latest">En Yeni</option>
+                <option value="popular">En Popüler</option>
+                <option value="most_commented">En Çok Yorum Alan</option>
+                <option value="most_viewed">En Çok Görüntülenen</option>
+            </select>
+        </div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'forum:create_post' %}?category={{ category.id }}" class="new-post-btn">
+            <i class="fas fa-plus"></i>
+            Yeni Gönderi
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Gönderiler -->
+    <div class="posts-container">
+        {% if posts %}
+        <div class="posts-grid" id="postsGrid">
+            {% for post in posts %}
+            <div class="post-card" data-title="{{ post.title|lower }}" data-date="{{ post.created_at|date:'U' }}" 
+                 data-comments="{{ post.comments.count }}" data-views="{{ post.views }}">
+                <div class="post-header">
+                    <div class="author-info">
+                        <img src="{{ post.author.userprofile.avatar.url|default:'/static/forum/images/default-avatar.png' }}" 
+                             alt="{{ post.author.username }}" class="author-avatar">
+                        <div class="author-details">
+                            <a href="{% url 'forum:profile' post.author.username %}" class="author-name">
+                                {{ post.author.username }}
+                            </a>
+                            <span class="post-date">{{ post.created_at|date:"d M Y" }}</span>
+                        </div>
+                    </div>
+                    {% if post.is_pinned %}
+                    <div class="pin-badge">
+                        <i class="fas fa-thumbtack"></i>
+                        Sabitlenmiş
+                    </div>
+                    {% endif %}
+                </div>
+
+                <h2 class="post-title">
+                    <a href="{% url 'forum:post_detail' post.id %}">{{ post.title }}</a>
+                </h2>
+
+                <div class="post-preview">
+                    {{ post.content|striptags|truncatewords:30 }}
+                </div>
+
+                {% if post.images.exists %}
+                <div class="post-images">
+                    {% for image in post.images.all|slice:":3" %}
+                    <div class="image-preview">
+                        <img src="{{ image.image.url }}" alt="Gönderi görseli">
+                    </div>
+                    {% endfor %}
+                    {% if post.images.count > 3 %}
+                    <div class="more-images">
+                        <span>+{{ post.images.count|add:"-3" }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="post-footer">
+                    <div class="post-stats">
+                        <span class="views">
+                            <i class="fas fa-eye"></i>
+                            {{ post.views }}
+                        </span>
+                        <span class="comments">
+                            <i class="fas fa-comments"></i>
+                            {{ post.comments.count }}
+                        </span>
+                        {% if post.files.exists %}
+                        <span class="attachments">
+                            <i class="fas fa-paperclip"></i>
+                            {{ post.files.count }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'forum:post_detail' post.id %}" class="read-more">
+                        Devamını Oku
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Sayfalama -->
+        {% if posts.has_other_pages %}
+        <div class="pagination">
+            {% if posts.has_previous %}
+            <a href="?page={{ posts.previous_page_number }}" class="page-link">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            {% endif %}
+
+            {% for num in posts.paginator.page_range %}
+                {% if posts.number == num %}
+                <span class="page-link active">{{ num }}</span>
+                {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
+                <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}" class="page-link">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-file-alt"></i>
+            <h3>Henüz gönderi yok</h3>
+            <p>Bu kategoride henüz gönderi bulunmuyor.</p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'forum:create_post' %}?category={{ category.id }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                İlk Gönderiyi Oluştur
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'forum/js/category.js' %}"></script>
+{% endblock %} 

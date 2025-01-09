@@ -1,0 +1,7 @@
+<div class="comment-avatar">
+    {% if comment.author.userprofile.avatar %}
+        <img src="{{ comment.author.userprofile.avatar.url }}" alt="{{ comment.author.username }}" class="comment-user-avatar">
+    {% else %}
+        <img src="{% static 'forum/images/default-avatar.png' %}" alt="{{ comment.author.username }}" class="comment-user-avatar">
+    {% endif %}
+</div> 

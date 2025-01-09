@@ -1,0 +1,87 @@
+<div class="comments-header">
+    <div class="header-cell">Yazar</div>
+    <div class="header-cell">Yorum</div>
+    <div class="header-cell">Konu</div>
+    <div class="header-cell">Son Aktivite</div>
+</div>
+
+{% for comment in comments %}
+<div class="comment-item">
+    <div class="comment-author">
+        <div class="author-avatar">
+            <a href="{% url 'forum:profile' comment.author.username %}">
+                {% if comment.author.userprofile.avatar %}
+                    <img src="{{ comment.author.userprofile.avatar.url }}" alt="{{ comment.author.username }}">
+                {% else %}
+                    <img src="{% static 'forum/images/default-avatar.png' %}" alt="{{ comment.author.username }}">
+                {% endif %}
+            </a>
+        </div>
+        <div class="author-info">
+            <a href="{% url 'forum:profile' comment.author.username %}" class="author-name">
+                {{ comment.author.username }}
+            </a>
+            <span class="author-role">Üye</span>
+        </div>
+    </div>
+    <div class="comment-content">{{ comment.content|truncatewords:20 }}</div>
+    <div class="comment-post">
+        <a href="{% url 'forum:post_detail' comment.post.id %}" class="post-link">{{ comment.post.title }}</a>
+    </div>
+    <div class="comment-meta">
+        <span class="comment-date">{{ comment.created_at|timesince }} önce</span>
+        <a href="{% url 'forum:post_detail' comment.post.id %}#comment-{{ comment.id }}" class="comment-link">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</div>
+{% endfor %} 
+
+<style>
+    /* Son yorumlar profil ikonları */
+    .comment-author {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .comment-author .author-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .comment-author .author-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+    }
+
+    .author-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .author-name {
+        font-size: 0.9em;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .author-role {
+        font-size: 0.75em;
+        color: #666;
+    }
+
+    /* Grid yapısını düzenleme */
+    .comments-header {
+        grid-template-columns: 180px minmax(250px, 2fr) minmax(180px, 1fr) 100px;
+    }
+
+    .comment-item {
+        grid-template-columns: 180px minmax(250px, 2fr) minmax(180px, 1fr) 100px;
+    }
+</style> 

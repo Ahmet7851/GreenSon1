@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GreenAI - Bitki Hastalığı Teşhis{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/tespit.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Hastalık Tespiti</h1>
+    
+    <div class="diagnosis-container">
+        <div class="diagnosis-box info-box">
+            <h2>Neden Bitki Hastalık Tespiti?</h2>
+            <p>Bitki hastalıkları, türlerinin büyümesini etkiler. Erken teşhis, sağlıklı bir bahçe için kritik öneme sahiptir.</p>
+        </div>
+
+        <div class="diagnosis-box upload-section">
+            <img src="{% static 'images/yukle.jpg' %}" alt="Upload">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="file-input-wrapper">
+                    <input type="file" name="image" id="id_image" class="file-input" accept="image/*" style="display: none;">
+                    <label for="id_image" class="file-input-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        Fotoğraf Seçin
+                    </label>
+                    <span id="selected-file-name" class="selected-file-name"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-upload"></i>
+                    Fotoğrafı Yükle
+                </button>
+            </form>
+        </div>
+
+        <div class="diagnosis-box steps-box">
+            <h2>Önleyici Adımlar</h2>
+            <ul class="steps-list">
+                <li>İyi Sanitasyon Uygulamaları</li>
+                <li>Düzenli Gübreleme</li>
+                <li>Hastalık Kontrolü</li>
+                <li>Toprak Hazırlığı</li>
+                <li>Mahsul Rotasyonu</li>
+                <li>Havalandırma</li>
+                <li>Düzenli Bakım</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="notification" id="popup-message">Dosya yüklendi</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/upload.js' %}"></script>
+{% endblock %}

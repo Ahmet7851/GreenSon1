@@ -1,0 +1,322 @@
+{% extends 'forum/base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} - GreenAI Forum{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'forum/css/post_detail.css' %}" rel="stylesheet">
+<style>
+    .navbar {
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 0.5rem 2rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+    }
+
+    .nav-content {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-auth {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-menu {
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .user-menu .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        transition: transform 0.3s ease;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 4px;
+        min-width: 200px;
+        padding: 8px 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .user-menu:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .dropdown-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        color: #333;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+        background: rgba(46, 204, 113, 0.1);
+        color: #2ecc71;
+    }
+
+    .dropdown-menu i {
+        width: 20px;
+        color: #666;
+    }
+
+    .dropdown-menu a:hover i {
+        color: #2ecc71;
+    }
+
+    /* Yeni Konu Butonu */
+    .new-topic-btn {
+        background: #2ecc71;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .new-topic-btn:hover {
+        background: #27ae60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="post-detail-container">
+    <div class="post-content">
+        <!-- Gönderi Başlığı ve Meta Bilgileri -->
+        <div class="post-header">
+            <div class="category-badge">
+                <i class="{{ post.category.icon }}"></i>
+                {{ post.category.name }}
+            </div>
+            <h1 class="post-title">{{ post.title }}</h1>
+            <div class="post-meta">
+                <div class="author-info">
+                    <img src="{{ post.author.userprofile.avatar.url|default:'/static/forum/images/default-avatar.png' }}" 
+                         alt="{{ post.author.username }}" class="author-avatar">
+                    <div class="author-details">
+                        <a href="{% url 'forum:profile' post.author.username %}" class="author-name">
+                            {{ post.author.username }}
+                        </a>
+                        <span class="post-date">{{ post.created_at|date:"d M Y, H:i" }}</span>
+                    </div>
+                </div>
+                <div class="post-stats">
+                    <span class="views">
+                        <i class="fas fa-eye"></i> {{ post.views }}
+                    </span>
+                    <span class="comments">
+                        <i class="fas fa-comments"></i> {{ post.comments.count }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gönderi İçeriği -->
+        <div class="post-body">
+            {{ post.content|safe }}
+        </div>
+
+        <!-- Gönderi Görselleri -->
+        {% if post.post_images.exists %}
+        <div class="post-images">
+            <h3>Görseller</h3>
+            <div class="image-grid">
+                {% for image in post.post_images.all %}
+                <div class="image-item">
+                    <img src="{{ image.image.url }}" alt="Gönderi görseli">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Gönderi Dosyaları -->
+        {% if post.post_files.exists %}
+        <div class="post-files">
+            <h3>Dosyalar</h3>
+            <div class="file-list">
+                {% for file in post.post_files.all %}
+                <a href="{{ file.file.url }}" class="file-item" download>
+                    <i class="fas fa-file"></i>
+                    <span class="file-name">{{ file.file_name }}</span>
+                    <span class="file-size">{{ file.file_size|filesizeformat }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Yorumlar Bölümü -->
+    <div class="comments-section">
+        <h2>Yorumlar ({{ post.comments.count }})</h2>
+        
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'forum:add_comment' post.id %}" class="comment-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea name="content" placeholder="Yorumunuzu yazın..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i>
+                Yorum Yap
+            </button>
+        </form>
+        {% endif %}
+
+        <!-- Yorumların Listesi -->
+        <div class="comments-list">
+            {% for comment in post.comments.all %}
+            <div class="comment" id="comment-{{ comment.id }}">
+                <div class="comment-header">
+                    <div class="comment-author">
+                        {% if comment.author.userprofile.avatar %}
+                            <a href="{% url 'forum:profile' comment.author.username %}">
+                                <img src="{{ comment.author.userprofile.avatar.url }}" alt="Avatar" class="author-avatar">
+                            </a>
+                        {% else %}
+                            <a href="{% url 'forum:profile' comment.author.username %}">
+                                <img src="{% static 'forum/images/default-avatar.png' %}" alt="Default Avatar" class="author-avatar">
+                            </a>
+                        {% endif %}
+                        <div class="author-details">
+                            <span class="author-name">{{ comment.author.username }}</span>
+                            <span class="comment-date">
+                                <i class="far fa-clock"></i>
+                                {{ comment.created_at|date:"d M Y, H:i" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-content" id="comment-content-{{ comment.id }}">
+                    {{ comment.content }}
+                </div>
+
+                {% if user == comment.author %}
+                <div class="comment-actions" style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+                    <button class="comment-btn edit-btn" onclick="editComment({{ comment.id }})" 
+                            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; 
+                                   border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 500; 
+                                   cursor: pointer; transition: all 0.2s ease; color: #3b82f6; 
+                                   background-color: rgba(59, 130, 246, 0.1);">
+                        <i class="fas fa-edit" style="font-size: 0.875rem;"></i>
+                        <span style="display: inline-block;">Düzenle</span>
+                    </button>
+                    <button class="comment-btn delete-btn" onclick="confirmDelete('{{ comment.id }}')"
+                            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; 
+                                   border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 500; 
+                                   cursor: pointer; transition: all 0.2s ease; color: #ef4444; 
+                                   background-color: rgba(239, 68, 68, 0.1);">
+                        <i class="fas fa-trash" style="font-size: 0.875rem;"></i>
+                        <span style="display: inline-block;">Sil</span>
+                    </button>
+                </div>
+                {% endif %}
+
+                <div class="comment-edit-form" id="comment-edit-form-{{ comment.id }}" style="display: none; margin-top: 1rem;">
+                    <textarea class="edit-textarea" style="width: 100%; min-height: 100px; padding: 0.75rem; 
+                             border: 1px solid #e2e8f0; border-radius: 8px; resize: vertical; 
+                             font-size: 0.875rem; line-height: 1.5; margin-bottom: 1rem; 
+                             transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">{{ comment.content }}</textarea>
+                    <div class="edit-actions" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                        <button class="comment-btn save-btn" onclick="saveComment({{ comment.id }})"
+                                style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; 
+                                       border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 500; 
+                                       cursor: pointer; transition: all 0.2s ease; color: white; 
+                                       background-color: #10b981;">
+                            <i class="fas fa-check"></i>
+                            <span>Kaydet</span>
+                        </button>
+                        <button class="comment-btn cancel-btn" onclick="cancelEdit({{ comment.id }})"
+                                style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; 
+                                       border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 500; 
+                                       cursor: pointer; transition: all 0.2s ease; color: #6b7280; 
+                                       background-color: #f3f4f6;">
+                            <i class="fas fa-times"></i>
+                            <span>İptal</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="delete-modal" id="deleteModal-{{ comment.id }}" style="display: none; position: fixed; top: 0; left: 0; 
+                         width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); 
+                         z-index: 1000; display: none; align-items: center; justify-content: center;">
+                    <div class="modal-dialog" style="position: relative; width: 95%; max-width: 400px; background: white; 
+                         border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+                         0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden; margin: auto;">
+                        <div class="modal-content" style="position: relative;">
+                            <div class="modal-header" style="padding: 1.25rem; border-bottom: 1px solid #e5e7eb; background-color: #f9fafb;">
+                                <h3 style="margin: 0; color: #1f2937; font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+                                    Yorumu Sil
+                                </h3>
+                            </div>
+                            <div class="modal-body" style="padding: 1.5rem; color: #4b5563;">
+                                <p style="margin: 0; font-size: 0.975rem; line-height: 1.5;">Bu yorumu silmek istediğinizden emin misiniz?</p>
+                            </div>
+                            <div class="modal-footer" style="padding: 1.25rem; background-color: #f9fafb; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                                <button onclick="closeDeleteModal({{ comment.id }})" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; color: #6b7280; background-color: #f3f4f6;">
+                                    <i class="fas fa-times"></i>
+                                    <span>İptal</span>
+                                </button>
+                                <button onclick="deleteComment({{ comment.id }})" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; color: white; background-color: #ef4444;">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Sil</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Görsel Görüntüleyici -->
+<div id="imageViewer" class="image-viewer">
+    <span class="close-viewer">&times;</span>
+    <img id="viewerImage" src="" alt="Büyük görsel">
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'forum/js/post_detail.js' %}"></script>
+{% endblock %} 

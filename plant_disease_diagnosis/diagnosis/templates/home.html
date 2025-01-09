@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GreenAI - Tarım ve Bitki Sağlığı{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/home.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>Bitkileriniz İçin Akıllı Çözümler</h1>
+            <p>GreenAI ile bitki sağlığı, modern tarım teknikleri ve yapay zeka destekli çözümlerle tanışın.</p>
+            <a href="{% url 'tespit' %}" class="cta-button">
+                <i class="fas fa-leaf"></i>
+                Bitkimin Neyi Var?
+            </a>
+        </div>
+        <div class="hero-image">
+            <img src="{% static 'images/hero-image.jpg' %}" alt="Akıllı Tarım" width="500" height="500"/>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="section-title">
+        <h2>Öne Çıkan Özellikler</h2>
+        <p>Tarımda yenilikçi çözümler</p>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <h3>Bitki Tanıma</h3>
+            <p>Gelişmiş yapay zeka ile bitkilerinizi tanıyın ve sorunlarını hızlıca tespit edin.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-microscope"></i>
+            </div>
+            <h3>Hastalık Tespiti</h3>
+            <p>Bitkilerinizdeki hastalıkları erken evrede tespit ederek verimi artırın.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-f  lask"></i>
+            </div>
+            <h3>İlaç Tavsiyesi</h3>
+            <p>Bitkileriniz için en uygun ilaçları öğrenin ve doğru uygulamaları yapın.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <h3>Tarım Rehberi</h3>
+            <p>Modern tarım teknikleri, organik tarım ve daha fazlası hakkında kapsamlı rehberlik.</p>
+        </div>
+    </div>
+</section>
+
+    <section class="video-section">
+        <h2>Öğrenme Kaynakları</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/D0YFvRw9FI0" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <section class="blog-section">
+        <div class="section-title">
+            <h2>Son Blog Yazıları</h2>
+            <p>Tarım dünyasından en güncel bilgiler</p>
+        </div>
+        <div class="blog-posts">
+            <div class="blog-post">
+                <img src="https://plus.unsplash.com/premium_photo-1663034421287-bbde71a7d581?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D alt="Bitki Beslenmesi">
+                <div class="blog-content">
+                    <h3>Bitki Beslenmesi</h3>
+                    <p>Bitkilerinizin sağlıklı gelişimi için bilmeniz gerekenler.</p>
+                    <a href="https://tarfin.com/blog/bitki-besleme-hakkinda-bilmeniz-gerekenler" target="blank" class="blog-link">
+                        Daha Fazla Oku
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="blog-post">
+                <img src="https://images.unsplash.com/photo-1615811361523-6bd03d7748e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1674&q=80" alt="Toprak Analizi">
+                <div class="blog-content">
+                    <h3>Toprak Analizi</h3>
+                    <p>Toprak analizi yaparak verimi nasıl artırabilirsiniz?</p>
+                    <a href="https://teoxfarm.com/blog/icerik/toprak-analizi-sonuclarina-gore-gubreleme-uygulamalari/" target="blank" class="blog-link">
+                        Daha Fazla Oku
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="blog-post">
+                <img src="https://plus.unsplash.com/premium_photo-1661963586402-b20023897431?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Sürdürülebilir Tarım">
+                <div class="blog-content">
+                    <h3>Sürdürülebilir Tarım</h3>
+                    <p>Gelecek nesiller için sürdürülebilir tarım yöntemleri.</p>
+                    <a href="https://canbeltarim.com/2024/09/14/surdurulebilir-tarim-ve-biyocesitliligin-korunmasi/" target="blank" class="blog-link">
+                        Daha Fazla Oku
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2024 GreenAI. Tüm hakları saklıdır.</p>
+    </div>
+</footer>
+{% endblock %}

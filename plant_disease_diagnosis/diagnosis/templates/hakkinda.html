@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GreenAI - Hakkında{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/hakkinda.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+     
+<h1 class="about-title">GreenAI Hakkında</h1>
+    <div class="about-content">
+        <h1 class="about-title">GreenAI Hakkında</h1>
+        <div class="about-text">
+            <div class="info-card">
+                <p>
+                    <span class="highlight">GreenAI</span>, bitki yetiştiriciliği ve bitki hastalıkları konusunda yenilikçi çözümler sunan bir yapay zeka tabanlı platformdur. Bitki yetiştirme ve hastalık teşhisi konusunda uzman olmayan bireylerin, bitkilerindeki problemleri kolayca teşhis etmelerine ve çözüm bulmalarına yardımcı olur.
+                </p>
+            </div>
+            
+            <div class="info-card">
+                <p>
+                    <span class="highlight">GreenAI</span>, bitkilerin yapraklarını analiz ederek derin öğrenme yöntemlerini kullanır ve bitki problemlerini tanımlar. Ayrıca, yapay zeka destekli çözüm önerileri sunar ve kullanıcılara bu çözümleri uygulamaları için rehberlik eder.
+                </p>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Bitki Türü</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Hastalık Tespiti</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">95%</div>
+                <div class="stat-label">Doğruluk Oranı</div>
+            </div>
+        </div>
+
+        <div class="team-section">
+            <h2 class="about-title">Ekibimiz</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <img src="" alt="Takım Üyesi" class="team-image">
+                    <div class="team-info">
+                        <h3 class="team-name">Ahmet Bulut</h3>
+                        <p class="team-role">Yazılımcı</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <img src="/media/assets/team2.jpg" alt="Takım Üyesi" class="team-image">
+                    <div class="team-info">
+                        <h3 class="team-name">Uygar Yıldız</h3>
+                        <p class="team-role">Yazılımcı</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <img src="/media/assets/team3.jpg" alt="Takım Üyesi" class="team-image">
+                    <div class="team-info">
+                        <h3 class="team-name">Mehmet Dürmüş</h3>
+                        <p class="team-role">Ziraat Mühendisi</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

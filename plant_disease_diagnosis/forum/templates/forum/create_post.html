@@ -1,0 +1,328 @@
+{% extends 'forum/base.html' %}
+{% load static %}
+
+{% block title %}Yeni Gönderi - GreenAI Forum{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'forum/css/create_post.css' %}" rel="stylesheet">
+<style>
+    /* Navbar stilleri */
+    .navbar {
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 0.5rem 2rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+    }
+
+    .nav-content {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-auth {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-menu {
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .user-menu .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        transition: transform 0.3s ease;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 4px;
+        min-width: 200px;
+        padding: 8px 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        margin-top: 5px;
+    }
+
+    /* Boşluk ekleyerek menüye ulaşmayı kolaylaştırma */
+    .dropdown-menu::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: transparent;
+    }
+
+    .user-menu:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        display: block;
+    }
+
+    /* Menü görünür olduğunda da hover efektini koru */
+    .dropdown-menu:hover {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        display: block;
+    }
+
+    .dropdown-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        color: #333;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+        background: rgba(46, 204, 113, 0.1);
+        color: #2ecc71;
+    }
+
+    .dropdown-menu i {
+        width: 20px;
+        color: #666;
+    }
+
+    .dropdown-menu a:hover i {
+        color: #2ecc71;
+    }
+
+    .new-topic-btn {
+        background: #2ecc71;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .new-topic-btn:hover {
+        background: #27ae60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+    }
+
+    .new-topic-btn i {
+        font-size: 0.9em;
+    }
+
+    /* Forum içeriği için genel grid yapısı */
+    .topic-list {
+        padding: 10px;
+    }
+
+    .topic-header {
+        display: grid;
+        grid-template-columns: 50px minmax(200px, 3fr) 120px 80px 80px 120px;
+        padding: 15px;
+        font-weight: 500;
+        color: #666;
+        border-bottom: 2px solid #f0f0f0;
+        align-items: center;
+    }
+
+    .topic-item {
+        display: grid;
+        grid-template-columns: 50px minmax(200px, 3fr) 120px 80px 80px 120px;
+        padding: 20px 15px;
+        align-items: center;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.2s ease;
+    }
+
+    /* Ortak hücre stilleri */
+    .header-cell {
+        font-weight: 600;
+        color: #444;
+    }
+
+    .topic-number {
+        color: #666;
+        text-align: center;
+    }
+
+    .topic-main {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .topic-category {
+        color: #666;
+        font-size: 0.9em;
+        padding: 4px 12px;
+        background: rgba(46, 204, 113, 0.1);
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .topic-stats {
+        text-align: center;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .topic-date, .topic-last-user {
+        color: #666;
+        font-size: 0.9em;
+        text-align: center;
+    }
+
+    /* Responsive tasarım için medya sorguları */
+    @media (max-width: 768px) {
+        .topic-header, .topic-item {
+            grid-template-columns: 50px minmax(150px, 2fr) 100px 80px;
+            font-size: 0.9em;
+        }
+        
+        .topic-date, .topic-views {
+            display: none;
+        }
+        
+        .topic-category {
+            padding: 4px 8px;
+            font-size: 0.8em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-post-container">
+    <div class="create-post-header">
+        <h1>Yeni Gönderi Oluştur</h1>
+        <p>Topluluğumuzla düşüncelerinizi paylaşın</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="create-post-form" id="postForm">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="title">Başlık</label>
+            <input type="text" name="title" id="title" required 
+                   placeholder="Gönderiniz için açıklayıcı bir başlık girin"
+                   class="modern-input">
+        </div>
+
+        <div class="form-group">
+            <label for="category">Kategori</label>
+            <select name="category" id="category" required class="modern-select">
+                <option value="">Kategori seçin</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group content-group">
+            <label for="content">Açıklama</label>
+            <div class="content-wrapper">
+                <textarea name="content" id="content" rows="8" required
+                          placeholder="Açıklamanızı buraya yazın..."
+                          class="modern-textarea"></textarea>
+                
+                <div class="media-preview">
+                    <div class="upload-area" id="imageUpload">
+                        <div class="upload-placeholder">
+                            <i class="fas fa-images"></i>
+                            <p>Görselleri buraya sürükleyin veya seçin</p>
+                        </div>
+                        <input type="file" id="imageInput" name="images" multiple accept="image/*" class="file-input">
+                    </div>
+                    <div class="preview-grid" id="imagePreview"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="new-topic-btn">
+                <i class="fas fa-paper-plane"></i>
+                Gönderiyi Yayınla
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Görsel önizleme
+    document.getElementById('imageInput').addEventListener('change', function(e) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = '';
+        
+        for (let file of this.files) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview">
+                    <span class="remove-preview">&times;</span>
+                `;
+                preview.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Sürükle-bırak işlemleri
+    const dropZone = document.getElementById('imageUpload');
+    
+    dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        const input = this.querySelector('input[type="file"]');
+        input.files = e.dataTransfer.files;
+        input.dispatchEvent(new Event('change'));
+    });
+});
+</script>
+{% endblock %} 

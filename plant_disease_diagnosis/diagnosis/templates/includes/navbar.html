@@ -1,0 +1,15 @@
+<nav class="navbar">
+    <div class="nav-content">
+        <a href="{% url 'home' %}" class="logo-link">
+            <img src="/media/assets/greenAI2.jpg" alt="GreenAI Logo">
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'home' %}"><i class="fas fa-home"></i> Ana Sayfa</a>
+            <a href="{% url 'hakkinda' %}"><i class="fas fa-robot"></i> GreenAI</a>
+            <a href="{% url 'tespit' %}"><i class="fa-solid fa-magnifying-glass"></i> Bitkimin Neyi Var ?</a>
+            <a href="{% url 'supplements' %}"><i class="fas fa-pills"></i> İlaçlar</a>
+            <a href="#"><i class="fas fa-envelope"></i> İletişim</a>
+            <a href="{% url 'forum:home' %}" target="blank" ><i class="fa-brands fa-rocketchat"></i> Forum</a>
+        </div>
+    </div>
+</nav>  

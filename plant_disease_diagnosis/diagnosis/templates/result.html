@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GreenAI - Bitki Teşhis Sonucu{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2ECC71;
+        --secondary-color: #27AE60;
+        --dark-color: #1a1a1a;
+        --light-color: #f8f9fa;
+        --transition: all 0.3s ease;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+
+    .main-content {
+        max-width: 1200px;
+        margin: 100px auto 2rem;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 2rem;
+    }
+
+    .result-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: var(--transition);
+        height: fit-content;
+    }
+
+    .result-card:hover {
+        transform: translateY(-5px);
+    }
+
+    h1 {
+        text-align: center;
+        margin: 2rem 0 1rem 0;
+        color: rgb(18, 17, 17);
+    }
+
+    .image-section {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        aspect-ratio: 4/3;
+    }
+
+    .uploaded-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+        transition: var(--transition);
+        object-fit: cover;
+    }
+
+    .uploaded-image:hover {
+        transform: scale(1.03);
+    }
+
+    .diagnosis-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .diagnosis-header {
+        color: var(--dark-color);
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .diagnosis-content {
+        background: var(--light-color);
+        padding: 2rem;
+        border-radius: 15px;
+        border-left: 5px solid var(--primary-color);
+        line-height: 1.8;
+    }
+
+    .diagnosis-content h1, 
+    .diagnosis-content h2 {
+        color: var(--primary-color);
+        margin: 0.8rem 0 0.5rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.3rem;
+    }
+
+    .diagnosis-content h3 {
+        color: var(--primary-color);
+        margin: 0.6rem 0 0.4rem;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .diagnosis-content strong,
+    .diagnosis-content b {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: block;
+        margin-top: 0.8rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .diagnosis-content p {
+        margin: 0.5rem 0;
+        line-height: 1.5;
+    }
+
+    .diagnosis-content ul {
+        margin: 0.5rem 0;
+        padding-left: 1.5rem;
+    }
+
+    .diagnosis-content li {
+        margin: 0.3rem 0;
+        line-height: 1.4;
+        padding: 0.3rem 0;
+        padding-left: 1.5rem;
+    }
+
+    .diagnosis-content li::before {
+        content: '•';
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--primary-color);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        align-self: flex-start;
+    }
+
+    .action-button:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: #e3f2fd;
+        color: #1976d2;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            grid-template-columns: 1fr;
+        }
+
+        .nav-links {
+            display: none;
+        }
+
+        .diagnosis-header {
+            font-size: 1.5rem;
+        }
+    }
+
+    .diagnosis-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .diagnosis-type {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.1rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .diagnosis-type i {
+        font-size: 1.5rem;
+    }
+
+    .diagnosis-type span {
+        font-weight: 500;
+    }
+
+    .diagnosis-content h3 {
+        color: var(--primary-color);
+        margin: 1.5rem 0 1rem 0;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .diagnosis-content h3::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    .diagnosis-content ul {
+        list-style: none;
+        padding-left: 1rem;
+    }
+
+    .diagnosis-content li {
+        position: relative;
+        padding: 0.5rem 0;
+        padding-left: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .diagnosis-content li::before {
+        content: '•';
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+    }
+
+    .diagnosis-content p {
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .disease-title {
+        font-size: 1.8rem;
+        color: var(--primary-color);
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--primary-color);
+    }
+
+    .diagnosis-result h1,
+    .diagnosis-result h2,
+    .diagnosis-result h3 {
+        color: var(--primary-color);
+        margin: 1.5rem 0 1rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+    }
+
+    .solution-steps {
+        margin-top: 1rem;
+    }
+
+    .solution-steps p {
+        margin: 0.5rem 0;
+        line-height: 1.5;
+    }
+
+    .solution-steps ul {
+        margin: 0.5rem 0;
+        padding-left: 1.5rem;
+    }
+
+    .solution-steps li {
+        margin: 0.3rem 0;
+        line-height: 1.4;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+    <div class="result-card">
+        <div class="image-section">
+            <img src="{{ image_path }}" alt="Analiz Edilen Bitki" class="uploaded-image">
+        </div>
+    </div>
+
+    <div class="result-card diagnosis-section">
+        <span class="status-badge">
+            <i class="fas fa-check-circle"></i> Analiz Tamamlandı
+        </span>
+        <h1 class="diagnosis-header">Teşhis Sonucu</h1>
+        <div class="diagnosis-content">
+            {{ prediction|safe|linebreaks }}
+        </div>
+        <a href="{% url 'tespit' %}" class="action-button">
+            <i class="fas fa-camera"></i>
+            Yeni Görüntü Analizi
+        </a>
+    </div>
+</main>
+{% endblock %}

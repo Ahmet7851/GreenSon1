@@ -1,0 +1,51 @@
+{% load static %}
+
+<div class="topic-header">
+    <div class="header-cell">#</div>
+    <div class="header-cell">Konu</div>
+    <div class="header-cell">Kategori</div>
+    <div class="header-cell">Cevap</div>
+    <div class="header-cell">Görüntülenme</div>
+    <div class="header-cell">Son Yazan</div>
+</div>
+
+{% for post in posts %}
+<div class="topic-item">
+    <div class="topic-number">{{ forloop.counter }}</div>
+    <div class="topic-main">
+        <div class="topic-avatar">
+            <a href="{% url 'forum:profile' post.author.username %}">
+                {% if post.author.userprofile.avatar %}
+                    <img src="{{ post.author.userprofile.avatar.url }}" alt="{{ post.author.username }}" class="topic-user-avatar">
+                {% else %}
+                    <img src="{% static 'forum/images/default-avatar.png' %}" alt="{{ post.author.username }}" class="topic-user-avatar">
+                {% endif %}
+            </a>
+        </div>
+        <div class="topic-info">
+            <a href="{% url 'forum:post_detail' post.id %}" class="topic-title">{{ post.title }}</a>
+            <span class="topic-meta">{{ post.created_at|timesince }} önce</span>
+        </div>
+    </div>
+    <div class="topic-category">{{ post.category.name }}</div>
+    <div class="topic-replies">{{ post.comments.count }}</div>
+    <div class="topic-views">{{ post.views }}</div>
+    <div class="topic-last-user">
+        <div class="last-user-info">
+            <a href="{% url 'forum:profile' post.last_comment.author.username|default:post.author.username %}" class="last-user-avatar">
+                {% if post.last_comment.author.userprofile.avatar|default:post.author.userprofile.avatar %}
+                    <img src="{{ post.last_comment.author.userprofile.avatar.url|default:post.author.userprofile.avatar.url }}" alt="Son Yazan">
+                {% else %}
+                    <img src="{% static 'forum/images/default-avatar.png' %}" alt="Son Yazan">
+                {% endif %}
+            </a>
+            <div class="last-user-details">
+                <a href="{% url 'forum:profile' post.last_comment.author.username|default:post.author.username %}" class="last-user-name">
+                    {{ post.last_comment.author.username|default:post.author.username }}
+                </a>
+                <span class="last-post-date">{{ post.last_comment.created_at|default:post.created_at|timesince }} önce</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %} 

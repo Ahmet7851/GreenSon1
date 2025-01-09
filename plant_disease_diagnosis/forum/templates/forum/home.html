@@ -1,0 +1,850 @@
+{% extends 'forum/base.html' %}
+{% load static %}
+
+{% block title %}GreenAI Forum{% endblock %}
+
+{% block content %}
+<style>
+    /* Ana Container */
+    .forum-container {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 15px;
+    }
+
+    /* Forum Ana İçerik */
+    .forum-main-content {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    /* Forum Header */
+    .forum-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8f9fa;
+    }
+
+    .forum-tabs {
+        display: flex;
+        gap: 10px;
+    }
+
+    .tab-item {
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #666;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .tab-item:hover {
+        background: rgba(46, 204, 113, 0.1);
+        color: #2ecc71;
+    }
+
+    .tab-item.active {
+        background: #2ecc71;
+        color: white;
+    }
+
+    /* Konu Listesi */
+    .topic-list {
+        padding: 10px;
+    }
+
+    /* Grid yapısı */
+    .topic-header {
+        display: grid;
+        grid-template-columns: 50px minmax(250px, 2.5fr) 120px 80px 100px 180px;
+        gap: 15px;
+        padding: 15px;
+        font-weight: 500;
+        color: #666;
+        border-bottom: 2px solid #f0f0f0;
+        background: #f8f9fa;
+    }
+
+    .topic-item {
+        display: grid;
+        grid-template-columns: 50px minmax(250px, 2.5fr) 120px 80px 100px 180px;
+        gap: 15px;
+        padding: 15px;
+        align-items: center;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+    }
+
+    .topic-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+
+    /* Profil ve avatar stilleri */
+    .topic-avatar, .author-avatar, .last-user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .topic-user-avatar, .author-avatar img, .last-user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        transition: transform 0.3s ease;
+    }
+
+    /* Ana konu bilgileri */
+    .topic-main {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .topic-info {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    /* Son yazan kullanıcı bölümü */
+    .topic-last-user {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px;
+        max-width: 150px;
+    }
+
+    .last-user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .last-user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .last-user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        transition: transform 0.3s ease;
+    }
+
+    .last-user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        overflow: hidden;
+    }
+
+    .last-user-name {
+        color: #2c3e50;
+        font-weight: 500;
+        font-size: 0.9em;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .last-post-date {
+        color: #666;
+        font-size: 0.75em;
+    }
+
+    /* Metin stilleri */
+    .topic-title, .last-user-name {
+        color: #2c3e50;
+        font-weight: 500;
+        font-size: 0.9em;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .topic-meta, .last-post-date {
+        color: #666;
+        font-size: 0.75em;
+    }
+
+    /* Hover efektleri */
+    .topic-title:hover, .last-user-name:hover {
+        color: #2ecc71;
+    }
+
+    .topic-user-avatar:hover, .last-user-avatar img:hover {
+        transform: scale(1.1);
+    }
+
+    /* Diğer sütunlar */
+    .topic-category, .topic-replies, .topic-views {
+        text-align: center;
+        padding: 0 10px;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    /* Responsive tasarım */
+    @media (max-width: 1024px) {
+        .topic-header, .topic-item {
+            grid-template-columns: 50px minmax(200px, 2fr) 100px 80px 120px;
+        }
+        .topic-views {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .topic-header, .topic-item {
+            grid-template-columns: 50px minmax(150px, 2fr) 80px;
+        }
+        .topic-category, .topic-last-user {
+            display: none;
+        }
+    }
+
+    /* Blog Sidebar */
+    .forum-sidebar {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-box {
+        padding: 15px;
+    }
+
+    .sidebar-box h3 {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #2ecc71;
+        color: #333;
+    }
+
+    .recent-blogs {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .blog-item {
+        border: 1px solid #eee;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.2s;
+    }
+
+    .blog-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .blog-image {
+        height: 150px;
+        overflow: hidden;
+    }
+
+    .blog-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .blog-info {
+        padding: 12px;
+    }
+
+    .blog-title {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .blog-description {
+        font-size: 0.9em;
+        color: #666;
+        margin-bottom: 10px;
+        line-height: 1.4;
+    }
+
+    .blog-meta {
+        font-size: 0.85em;
+        color: #2ecc71;
+    }
+
+    /* Yeni Gönderi Butonu */
+    .new-post-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #2ecc71;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .new-post-button:hover {
+        background: #27ae60;
+        transform: translateY(-2px);
+    }
+
+    .new-post-button i {
+        font-size: 0.9em;
+    }
+
+    /* Profil Resmi */
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+    }
+
+    /* Kullanıcı Menüsü */
+    .user-menu {
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .user-menu .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        transition: transform 0.3s ease;
+    }
+
+    .user-menu .username {
+        font-size: 0.85rem;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .user-menu:hover .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 4px;
+        min-width: 200px;
+        z-index: 1000;
+        padding: 5px 0;
+        margin-top: 5px;
+    }
+
+    /* Dropdown menüyü görünür yapma */
+    .user-menu:hover .dropdown-menu {
+        display: block;
+    }
+
+    /* Dropdown menü içeriği için padding ekleme */
+    .dropdown-menu::before {
+        content: '';
+        position: absolute;
+        top: -20px; /* Boşluk ekleme */
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: transparent;
+    }
+
+    /* Dropdown menü öğeleri */
+    .dropdown-menu a {
+        display: block;
+        padding: 10px 15px;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+        background-color: #f8f9fa;
+        color: #2ecc71;
+    }
+
+    /* Yeni Konu Aç Butonu */
+    .new-topic-btn {
+        background: #2ecc71;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .new-topic-btn:hover {
+        background: #27ae60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+    }
+
+    .new-topic-btn i {
+        font-size: 0.9em;
+    }
+
+    /* Action Buttons Container */
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    /* Navbar Kullanıcı Menüsü */
+    .nav-auth {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .user-menu {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .user-menu .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        transition: transform 0.3s ease;
+    }
+
+    .user-menu:hover .avatar {
+        transform: scale(1.1);
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        min-width: 200px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 8px 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .user-menu:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .dropdown-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        color: #333;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+        background: rgba(46, 204, 113, 0.1);
+        color: #2ecc71;
+    }
+
+    .dropdown-menu i {
+        width: 20px;
+        color: #666;
+    }
+
+    .dropdown-menu a:hover i {
+        color: #2ecc71;
+    }
+
+    /* Ayırıcı çizgi */
+    .dropdown-menu hr {
+        margin: 8px 0;
+        border: none;
+        border-top: 1px solid #eee;
+    }
+
+    .topic-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        padding: 2px;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .topic-user-avatar {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+        display: block;
+    }
+
+    .topic-item:hover .topic-user-avatar {
+        transform: scale(1.1);
+    }
+
+    /* Son yazan hücresi için özel stil */
+    .topic-last-user {
+        color: #666;
+        font-size: 0.9em;
+        text-align: center;
+        padding-left: 15px;
+    }
+
+    /* Gönderim tarihi için stil */
+    .topic-date {
+        color: #666;
+        font-size: 0.9em;
+        padding-right: 15px;
+    }
+
+    /* Profil ikonları için genel stil */
+    .topic-avatar, .author-avatar {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 8px;
+    }
+
+    .topic-user-avatar, .author-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        transition: transform 0.3s ease;
+    }
+
+    /* Son yazan kullanıcı profil ikonu */
+    .last-user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .last-user-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .last-user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 1.5px solid #2ecc71;
+    }
+
+    /* Grid yapısını düzenleme */
+    .topic-header {
+        grid-template-columns: 50px minmax(250px, 2.5fr) 120px 80px 100px 180px;
+    }
+
+    .topic-item {
+        grid-template-columns: 50px minmax(250px, 2.5fr) 120px 80px 100px 180px;
+    }
+
+    /* Son yazan kullanıcı detayları */
+    .last-user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 0.85em;
+    }
+
+    .last-user-name {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .last-post-date {
+        color: #666;
+        font-size: 0.85em;
+    }
+
+    /* Son yazan kullanıcı hücresi */
+    .topic-last-user {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px;
+        max-width: 150px;
+    }
+
+    /* Görüntülenme ve cevap sayısı hücreleri */
+    .topic-views, .topic-replies {
+        text-align: center;
+        padding: 0 10px;
+    }
+
+    /* Responsive tasarım */
+    @media (max-width: 1024px) {
+        .topic-header, .topic-item {
+            grid-template-columns: 50px minmax(200px, 2fr) 100px 80px 120px;
+        }
+        .topic-views {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .topic-header, .topic-item {
+            grid-template-columns: 50px minmax(150px, 2fr) 80px;
+        }
+        .topic-category, .topic-last-user {
+            display: none;
+        }
+    }
+
+    /* Ortak son yazan kullanıcı stilleri */
+    .topic-last-user, .comment-author {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px;
+        max-width: 150px;
+    }
+
+    /* Avatar stilleri */
+    .last-user-avatar, .author-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .last-user-avatar img, .author-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 2px solid #2ecc71;
+        transition: transform 0.3s ease;
+    }
+
+    /* Kullanıcı bilgileri */
+    .last-user-details, .author-info {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .last-user-name, .author-name {
+        color: #2c3e50;
+        font-weight: 500;
+        font-size: 0.9em;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .last-post-date, .author-role {
+        color: #666;
+        font-size: 0.75em;
+    }
+
+    /* Hover efektleri */
+    .last-user-name:hover, .author-name:hover {
+        color: #2ecc71;
+    }
+
+    .last-user-avatar img:hover, .author-avatar img:hover {
+        transform: scale(1.1);
+    }
+
+    /* Grid yapısını düzenleme */
+    .topic-header {
+        grid-template-columns: 50px minmax(250px, 2.5fr) 120px 80px 100px 180px;
+    }
+
+    .topic-item {
+        grid-template-columns: 50px minmax(250px, 2.5fr) 120px 80px 100px 180px;
+    }
+
+    .comments-header {
+        grid-template-columns: 150px minmax(250px, 2fr) minmax(180px, 1fr) 100px;
+    }
+
+    .comment-item {
+        grid-template-columns: 150px minmax(250px, 2fr) minmax(180px, 1fr) 100px;
+    }
+</style>
+
+<div class="forum-container">
+    <!-- Sol taraf - Forum içeriği -->
+    <div class="forum-main-content">
+        <!-- Mevcut forum içeriği buraya -->
+        <div class="forum-header">
+            <div class="forum-tabs">
+                <a href="#" class="tab-item active" data-tab="new-messages">
+                    <i class="fas fa-envelope"></i>
+                    KONULAR
+                </a>
+                <a href="#" class="tab-item" data-tab="recent-comments">
+                    <i class="fas fa-comment"></i>
+                    SON YORUMLAR
+                </a>
+            </div>
+            <div class="action-buttons">
+                {% if user.is_authenticated %}
+                <a href="{% url 'forum:create_post' %}" class="new-topic-btn">
+                    <i class="fas fa-plus"></i>
+                    Yeni Konu Aç
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="topic-list">
+            <div class="topic-header">
+                <div class="header-cell">#</div>
+                <div class="header-cell">Konu</div>
+                <div class="header-cell">Kategori</div>
+                <div class="header-cell">Cevap</div>
+                <div class="header-cell">Gönderim</div>
+                <div class="header-cell">Son yazan</div>
+            </div>
+            {% for post in posts %}
+            <div class="topic-item">
+                <div class="topic-number">{{ forloop.counter }}</div>
+                <div class="topic-main">
+                    <div class="topic-avatar">
+                        <a href="{% url 'forum:profile' post.author.username %}">
+                            {% if post.author.userprofile.avatar %}
+                                <img src="{{ post.author.userprofile.avatar.url }}" alt="{{ post.author.username }}" class="topic-user-avatar">
+                            {% else %}
+                                <img src="{% static 'forum/images/default-avatar.png' %}" alt="{{ post.author.username }}" class="topic-user-avatar">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="topic-info">
+                        <a href="{% url 'forum:post_detail' post.id %}" class="topic-title">{{ post.title }}</a>
+                    </div>
+                </div>
+                <div class="topic-category">{{ post.category.name }}</div>
+                <div class="topic-replies">{{ post.comments.count }}</div>
+                <div class="topic-date">{{ post.created_at|timesince }} önce</div>
+                <div class="topic-last-user">{{ post.last_comment.author.username|default:post.author.username }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Sağ sidebar - Blog yazıları -->
+    <div class="forum-sidebar">
+        <div class="sidebar-box">
+            <h3>Son Blog Yazıları</h3>
+            <div class="recent-blogs">
+                {% for blog in blog_posts %}
+                <div class="blog-item">
+                    <div class="blog-image">
+                        <img src="{{ blog.image_url }}" alt="{{ blog.title }}">
+                    </div>
+                    <div class="blog-info">
+                        <a href="{{ blog.link }}" class="blog-title"target="_blank">
+                            {{ blog.title }}
+                        </a>
+                        <p class="blog-description">{{ blog.description }}</p>
+                        <div class="blog-meta">
+                            <span>
+                                <i class="fas fa-external-link-alt"></i>
+                                Daha Fazla Oku
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.tab-item');
+    const topicList = document.querySelector('.topic-list');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            const tabType = this.dataset.tab;
+            
+            fetch(`/forum/get-posts/${tabType}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success' && data.html) {
+                        topicList.innerHTML = data.html;
+                    } else {
+                        console.error('Error:', data.message);
+                        topicList.innerHTML = '<div class="error-message">Veriler yüklenirken bir hata oluştu.</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    topicList.innerHTML = '<div class="error-message">Veriler yüklenirken bir hata oluştu.</div>';
+                });
+        });
+    });
+});
+</script>
+{% endblock %}
