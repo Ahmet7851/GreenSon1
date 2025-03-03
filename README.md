@@ -94,7 +94,7 @@ http://127.0.0.1:8000/
 
 ## 📞 İletişim
 ### Ahmet BULUT
-- LinkedIn: [Linkedin_profile](https://www.linkedin.com/in/ahmetblt/)
+- LinkedIn: [Linkedin](https://www.linkedin.com/in/ahmetblt/)
 - E-mail: ahmetblt2000@gmail.com
 ### Uygar YILDIZ
 - LinkedIn: [Linkedin](https://www.linkedin.com/in/uygar-yildiz-53109b260/)
