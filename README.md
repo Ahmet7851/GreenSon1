@@ -96,7 +96,9 @@ http://127.0.0.1:8000/
 Bu proje MIT lisansı altında lisanslanmıştır. Daha fazla bilgi için `LICENSE` dosyasına bakın.
 
 ## 📞 İletişim
-
-Proje Sahibi - [@yourusername](https://github.com/yourusername)
-
-Proje Linki: [https://github.com/yourusername/GreenSon1](https://github.com/yourusername/GreenSon1)
+### Ahmet BULUT
+- LinkedIn: [linkedin_profile](https://www.linkedin.com/in/ahmetblt/)
+- E-mail: ahmetblt2000@gmail.com
+### Uygar YILDIZ
+- LinkedIn: [linkedin_profile](https://www.linkedin.com/in/uygar-yildiz-53109b260/)
+- E-mail: uygaryildizz@gmail.com
