@@ -84,19 +84,28 @@ def predict_image(image_path):
     hastalik = tahmin_etiket
     
     try:
-        gemini_model = genai.GenerativeModel('gemini-pro')
-        response = gemini_model.generate_content(
-            f"Bitkimde {hastalik} sorunu var. Bu sorunu çözmek için izleyeceğim adımlar nelerdir? "
-            f"Lütfen madde madde, detaylı ve Türkçe olarak yanıtla. "
-            f"Çözüm önerilerini uygulama sırası, kullanılacak malzemeler ve dikkat edilmesi "
-            f"gereken noktalar ile birlikte açıkla. Markdown formatında yanıt ver."
-        )
-        # Markdown'u HTML'e dönüştür
-        md = markdown.Markdown(extensions=['extra'])
-        cozum_onerileri = md.convert(response.text)
+        # Gemini model yapılandırması
+        model = genai.GenerativeModel('gemini-2.0-flash')
+        
+        # Prompt hazırlama ve içerik oluşturma
+        prompt = f"""
+        Bitkimde {hastalik} sorunu var. Bu sorunu çözmek için izleyeceğim adımlar nelerdir?
+        Lütfen madde madde, detaylı ve Türkçe olarak yanıtla.
+        Çözüm önerilerini uygulama sırası, kullanılacak malzemeler ve dikkat edilmesi gereken noktalar ile birlikte açıkla.
+        Markdown formatında yanıt ver.
+        """
+        
+        response = model.generate_content(prompt)
+        
+        # Response kontrolü ve dönüştürme
+        if not response or not response.text:
+            cozum_onerileri = "Çözüm önerileri alınamadı. Lütfen daha sonra tekrar deneyin."
+        else:
+            md = markdown.Markdown(extensions=['extra'])
+            cozum_onerileri = md.convert(response.text)
     except Exception as e:
         print(f"Gemini API Hatası: {e}")
-        cozum_onerileri = "Çözüm önerileri alınamadı. Lütfen daha sonra tekrar deneyin."
+        cozum_onerileri = f"Çözüm önerileri alınamadı. Hata: {str(e)}"
 
     formatted_response = f"""
     <div class="diagnosis-result">

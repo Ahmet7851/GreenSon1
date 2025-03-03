@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-your-secret-key-here'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','10.192.222.110']
 
 
 # Application definition
@@ -152,10 +152,11 @@ LOGIN_URL = 'login'
 STATIC_ROOT.mkdir(parents=True, exist_ok=True)
 MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 
-genai.configure(api_key="AIzaSyDpMSjJkxXakcFxU0gA_Zl_qdKtgxqqFOo")
-
 # Gemini API Settings
-GEMINI_API_KEY = os.getenv('AIzaSyDpMSjJkxXakcFxU0gA_Zl_qdKtgxqqFOo')
+GEMINI_API_KEY = os.getenv('GOOGLE_API_KEY')
+
+# Configure Gemini API
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Session settings
 SESSION_COOKIE_AGE = 1209600  # 2 hafta (saniye cinsinden)
