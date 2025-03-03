@@ -91,9 +91,6 @@ http://127.0.0.1:8000/
 4. Branch'inize push edin (`git push origin feature/AmazingFeature`)
 5. Pull Request oluşturun
 
-## 📝 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır. Daha fazla bilgi için `LICENSE` dosyasına bakın.
 
 ## 📞 İletişim
 ### Ahmet BULUT
